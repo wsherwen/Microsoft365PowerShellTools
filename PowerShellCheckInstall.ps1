@@ -2,7 +2,7 @@ $Logfile = "$env:windir\Temp\Logs\MS365ModuleInstall.log"
 Function LogWrite{
    Param ([string]$logstring)
    Add-content $Logfile -value $logstring
-   write-output -value $logstring
+   write-output $logstring
    
 }
 function Get-TimeStamp {
