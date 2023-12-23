@@ -35,12 +35,9 @@ else
 $O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "AzureADPreview", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
 
 If ($Mode -eq "Install") {
-
-    LogWrite "$(Get-TimeStamp): Setting the installtion policy for PSGallery to trusted."
-    Set-PSRepository -name "PSGallery" -InstallationPolicy Trusted
-    LogWrite "$(Get-TimeStamp): The installtion policy for PSGallery is now set to trusted."
     LogWrite "$(Get-TimeStamp): Checking currently installed modules for MS365."
     ForEach ($Module in $O365Modules) {
+    LogWrite "$(Get-TimeStamp): Checking for the module: $Module."
     if (Get-Module -ListAvailable -Name $Module) {
         LogWrite "$(Get-TimeStamp): The module $Module is already installed."
     } 
