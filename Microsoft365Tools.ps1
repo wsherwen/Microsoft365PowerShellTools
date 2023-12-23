@@ -34,6 +34,20 @@ else
 
 $O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "AzureADPreview", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
 
+LogWrite "$(Get-TimeStamp): Checking for current NuGet Version Level."
+$PackageProviderVersion = (Get-PackageProvider -Name NuGet).Version
+LogWrite "$(Get-TimeStamp): Current NuGet Verison: $PackageProviderVersion."
+
+if ($PackageProviderVersion -lt '2.8.5.201') {
+    LogWrite "$(Get-TimeStamp): Updating NuGet."
+    Install-PackageProvider -Name NuGet -Force
+    LogWrite "$(Get-TimeStamp): NuGet Updated."
+    $PackageProviderVersion = (Get-PackageProvider -Name NuGet).Version
+    LogWrite "$(Get-TimeStamp): New NuGet Verison: $PackageProviderVersion."
+} else {
+    LogWrite "$(Get-TimeStamp): Current NuGet Verison: $PackageProviderVersion no update required"
+}
+
 If ($Mode -eq "Install") {
     LogWrite "$(Get-TimeStamp): Checking currently installed modules for MS365."
     ForEach ($Module in $O365Modules) {
@@ -42,7 +56,7 @@ If ($Mode -eq "Install") {
         LogWrite "$(Get-TimeStamp): The module $Module is already installed."
     } 
         else {
-            Install-Module -Name $Module -AllowClobber -Scope AllUsers
+            Install-Module -Name $Module -Scope AllUsers -AllowClobber -Force 
             LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
         }
     }
