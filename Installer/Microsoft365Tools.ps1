@@ -59,6 +59,12 @@ If ($Mode -eq "Install") {
             LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
             Install-Module -Name $Module -AllowClobber -scope allusers -Force 
             LogWrite "$(Get-TimeStamp): The module $Module was installed."
+            LogWrite "$(Get-TimeStamp): Capturing path for module $Module."
+            $modulePath = (Get-Module -ListAvailable -Name YourModuleName).ModuleBas
+            LogWrite "$(Get-TimeStamp): Path Found: $modulePath."
+            LogWrite "$(Get-TimeStamp): Moving from $modulePath to $env:ProgramFiles\WindowsPowerShell\Modules"
+            Move-Item -Path $modulePath -Destination '$env:ProgramFiles\WindowsPowerShell\Modules' -force
+            LogWrite "$(Get-TimeStamp): Files moved."
         }
     }
 }
