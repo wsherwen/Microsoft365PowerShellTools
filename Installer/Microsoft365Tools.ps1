@@ -57,7 +57,7 @@ If ($Mode -eq "Install") {
     } 
         else {
             LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
-            Install-Module -Name $Module -Scope AllUsers -AllowClobber -Force 
+            Install-Module -Name $Module -AllowClobber -Force 
             LogWrite "$(Get-TimeStamp): The module $Module was installed."
         }
     }
