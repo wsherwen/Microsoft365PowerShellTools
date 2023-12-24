@@ -35,8 +35,8 @@ else
 $O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "AzureADPreview", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
 
 LogWrite "$(Get-TimeStamp): Checking for current NuGet Version Level."
-$PackageProviderVersion = (Get-PackageProvider -Name NuGet).Version
-LogWrite "$(Get-TimeStamp): Current NuGet Verison: $PackageProviderVersion."
+$PackageProviderVersion = (Get-PackageProvider -ForceBootstrap -Name NuGet).Version
+LogWrite "$(Get-TimeStamp): Current NuGet Verison: $PackageProviderVersion." 
 
 if ($PackageProviderVersion -lt '2.8.5.201') {
     LogWrite "$(Get-TimeStamp): Updating NuGet."
@@ -56,8 +56,9 @@ If ($Mode -eq "Install") {
         LogWrite "$(Get-TimeStamp): The module $Module is already installed."
     } 
         else {
-            Install-Module -Name $Module -Scope AllUsers -AllowClobber -Force 
             LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
+            Install-Module -Name $Module -Scope AllUsers -AllowClobber -Force 
+            LogWrite "$(Get-TimeStamp): The module $Module was installed."
         }
     }
 }
@@ -65,8 +66,9 @@ If ($Mode -eq "Install") {
 If ($Mode -eq "Uninstall") {
     ForEach ($Module in $O365Modules) {
         if (Get-Module -ListAvailable -Name $Module) {
-            Uninstall-Module -Name $Module -AllVersions -Force
             LogWrite "$(Get-TimeStamp): The module $Module was found, now removing $Module."
+            Uninstall-Module -Name $Module -AllVersions -Force
+            LogWrite "$(Get-TimeStamp): The module $Module was removed."
         } 
             else {
                 LogWrite "$(Get-TimeStamp): The module $Module was not found, nothing to remove."
