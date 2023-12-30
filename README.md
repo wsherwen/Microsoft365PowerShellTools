@@ -1,7 +1,7 @@
-MS365ModuleInstall.ps1: A PowerShell script to easily install or uninstall essential Microsoft 365 PowerShell modules.
+**MS365ModuleInstall.ps1:** A PowerShell script to easily install or uninstall essential Microsoft 365 PowerShell modules.
 
-Key Features:
-
+**Key Features:
+**
 Installs or uninstalls multiple modules efficiently.
 Ensures current NuGet version for compatibility.
 Generates detailed log files for tracking actions.
@@ -15,8 +15,9 @@ Microsoft.Online.Sharepoint.PowerShell
 SharePointPnPPowerShellOnline
 ORCA
 WhiteboardAdmin
-Usage Instructions:
 
+**Usage Instructions:
+**
 Open PowerShell as an Administrator.
 
 Run the script with the appropriate mode:
@@ -32,7 +33,8 @@ Use code with caution. Learn more
 Review the log file (optional):
 
 The log file is created at $env:windir\Temp\Logs\MS365ModuleInstall.log.
-Additional Notes:
+
+**Additional Notes:**
 
 The script requires an active internet connection to download modules.
 It may prompt for confirmation during installation or uninstallation.
