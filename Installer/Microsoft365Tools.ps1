@@ -32,7 +32,7 @@ else
     LogWrite "$(Get-TimeStamp): Log directory exists."
 }
 
-$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "AzureADPreview", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
+$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
 
 LogWrite "$(Get-TimeStamp): Checking for current NuGet Version Level."
 $PackageProviderVersion = (Get-PackageProvider -ForceBootstrap -Name NuGet).Version
