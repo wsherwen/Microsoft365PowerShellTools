@@ -1,7 +1,6 @@
 # Author: Warren Sherwen
 # Last Edit: Warren Sherwen
-# Verison: 2.0
-# Change: Amended to cover Microsoft Graph
+# Verison: 1.0
 
 Param(
 [Parameter(Mandatory=$true)]
@@ -33,7 +32,7 @@ else
     LogWrite "$(Get-TimeStamp): Log directory exists."
 }
 
-$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "ORCA", "WhiteboardAdmin", "Microsoft.Graph*")
+$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "ORCA", "WhiteboardAdmin", "Microsoft.Graph*", "WhiteboardAdmin")
 
 LogWrite "$(Get-TimeStamp): Checking for current NuGet Version Level."
 $PackageProviderVersion = (Get-PackageProvider -ForceBootstrap -Name NuGet).Version
@@ -53,7 +52,7 @@ If ($Mode -eq "Install") {
     LogWrite "$(Get-TimeStamp): Checking currently installed modules for MS365."
     ForEach ($Module in $O365Modules) {
          LogWrite "$(Get-TimeStamp): Checking for the module: $Module."
-            if ($module = "Microsoft.Graph*") {
+            if ($module -like "Microsoft.Graph*") {
                     $MSGraph = Find-Module -name 'Microsoft.Graph.*'
                      ForEach ($Graph in $MSGraph) {
                             $GraphName = $Graph.Name
@@ -80,12 +79,12 @@ If ($Mode -eq "Install") {
 If ($Mode -eq "Uninstall") {
     ForEach ($Module in $O365Modules) {
         if (Get-Module -ListAvailable -Name $Module) {
-            if ($module = "Microsoft.Graph*") {
-                $MSGraph = Get-Module -ListAvailable -name Microsoft.Graph*
+            if ($module -like "Microsoft.Graph*") {
+                $MSGraph = Get-Module -ListAvailable -name 'Microsoft.Graph.*'
                 ForEach ($Graph in $MSGraph) {
                     $GraphName = $Graph.Name
                     LogWrite "$(Get-TimeStamp): The module $GraphName was found, now removing $GraphName."
-                    Uninstall-Module -Name $Graph.Name -RequiredVersion $Graph.Version -Force
+                    Uninstall-Module -Name $Graph.Name -Scope CurrentUser -Force
                     LogWrite "$(Get-TimeStamp): The module $GraphName was removed."
                 }
             }else {
