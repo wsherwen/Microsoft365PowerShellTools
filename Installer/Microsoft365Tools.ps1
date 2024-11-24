@@ -1,6 +1,7 @@
 # Author: Warren Sherwen
 # Last Edit: Warren Sherwen
-# Verison: 1.0
+# Verison: 2.0
+# Change: Amended to cover Microsoft Graph
 
 Param(
 [Parameter(Mandatory=$true)]
@@ -9,7 +10,7 @@ Param(
 $Mode
 )
 
-$Logfile = "$env:windir\Temp\Logs\MS365ModuleInstall.log"
+$Logfile = "$env:APPDATA\Temp\Logs\MS365ModuleInstall.log"
 Function LogWrite{
    Param ([string]$logstring)
    Add-content $Logfile -value $logstring
@@ -20,9 +21,9 @@ function Get-TimeStamp {
     return "[{0:dd/MM/yy} {0:HH:mm:ss}]" -f (Get-Date)
 }
 
-if (!(Test-Path "$env:windir\Temp\Logs\"))
+if (!(Test-Path "$env:APPDATA\Temp\Logs\"))
 {
-   mkdir $env:windir\Temp\Logs
+   mkdir $env:APPDATA\Temp\Logs
    LogWrite "$(Get-TimeStamp): Script has started."
    LogWrite "$(Get-TimeStamp): Log directory created."
 }
@@ -32,7 +33,7 @@ else
     LogWrite "$(Get-TimeStamp): Log directory exists."
 }
 
-$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin")
+$O365Modules = @("MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "ORCA", "WhiteboardAdmin", "Microsoft.Graph*")
 
 LogWrite "$(Get-TimeStamp): Checking for current NuGet Version Level."
 $PackageProviderVersion = (Get-PackageProvider -ForceBootstrap -Name NuGet).Version
@@ -51,20 +52,27 @@ if ($PackageProviderVersion -lt '2.8.5.201') {
 If ($Mode -eq "Install") {
     LogWrite "$(Get-TimeStamp): Checking currently installed modules for MS365."
     ForEach ($Module in $O365Modules) {
-    LogWrite "$(Get-TimeStamp): Checking for the module: $Module."
-    if (Get-Module -ListAvailable -Name $Module) {
-        LogWrite "$(Get-TimeStamp): The module $Module is already installed."
-    } 
-        else {
-            LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
-            Install-Module -Name $Module -AllowClobber -scope allusers -Force 
-            LogWrite "$(Get-TimeStamp): The module $Module was installed."
-            LogWrite "$(Get-TimeStamp): Capturing path for module $Module."
-            $modulePath = (Get-Module -ListAvailable -Name YourModuleName).ModuleBas
-            LogWrite "$(Get-TimeStamp): Path Found: $modulePath."
-            LogWrite "$(Get-TimeStamp): Moving from $modulePath to $env:ProgramFiles\WindowsPowerShell\Modules"
-            Move-Item -Path $modulePath -Destination '$env:ProgramFiles\WindowsPowerShell\Modules' -force
-            LogWrite "$(Get-TimeStamp): Files moved."
+         LogWrite "$(Get-TimeStamp): Checking for the module: $Module."
+            if ($module = "Microsoft.Graph*") {
+                    $MSGraph = Find-Module -name 'Microsoft.Graph.*'
+                     ForEach ($Graph in $MSGraph) {
+                            $GraphName = $Graph.Name
+                            if (Get-Module -ListAvailable -Name $Graph.name) {
+                            LogWrite "$(Get-TimeStamp): The module $GraphName is already installed."
+                        } else {
+                            LogWrite "$(Get-TimeStamp): The module $GraphName was not found, now install $GraphName."
+                            Install-Module -Name $Graph.Name -AllowClobber -Force -Scope CurrentUser
+                            LogWrite "$(Get-TimeStamp): The module $GraphName was installed."
+                        }                
+                    }
+        } else {
+                if (Get-Module -ListAvailable -Name $Module) {
+                LogWrite "$(Get-TimeStamp): The module $Module is already installed."
+            } else {
+                LogWrite "$(Get-TimeStamp): The module $Module was not found, now installing $Module."
+                Install-Module -Name $Module -AllowClobber -Scope CurrentUser -Force 
+                LogWrite "$(Get-TimeStamp): The module $Module was installed."
+            }
         }
     }
 }
@@ -72,9 +80,19 @@ If ($Mode -eq "Install") {
 If ($Mode -eq "Uninstall") {
     ForEach ($Module in $O365Modules) {
         if (Get-Module -ListAvailable -Name $Module) {
+            if ($module = "Microsoft.Graph*") {
+                $MSGraph = Get-Module -ListAvailable -name Microsoft.Graph*
+                ForEach ($Graph in $MSGraph) {
+                    $GraphName = $Graph.Name
+                    LogWrite "$(Get-TimeStamp): The module $GraphName was found, now removing $GraphName."
+                    Uninstall-Module -Name $Graph.Name -RequiredVersion $Graph.Version -Force
+                    LogWrite "$(Get-TimeStamp): The module $GraphName was removed."
+                }
+            }else {
             LogWrite "$(Get-TimeStamp): The module $Module was found, now removing $Module."
-            Uninstall-Module -Name $Module -AllVersions -Force
+            Uninstall-Module -Name $Module -AllVersions -Scope CurrentUser -Force
             LogWrite "$(Get-TimeStamp): The module $Module was removed."
+            }
         } 
             else {
                 LogWrite "$(Get-TimeStamp): The module $Module was not found, nothing to remove."
