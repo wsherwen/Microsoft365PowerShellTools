@@ -1,6 +1,6 @@
 # Author: Warren Sherwen
 # Last Edit: Warren Sherwen
-# Verison: 1.0
+# Verison: 2.0
 
 $Logfile = "$env:windir\Temp\Logs\MS365CheckInstalledModules.log"
 Function LogWrite{
@@ -26,7 +26,7 @@ else
 }
 
 $modulesToCheck = @(
-    "MicrosoftTeams", "MSOnline", "AzureAD", "AzureADPreview", "ExchangeOnlineManagement", "Microsoft.Online.Sharepoint.PowerShell", "SharePointPnPPowerShellOnline", "ORCA", "WhiteboardAdmin"
+    "MicrosoftTeams", "MSOnline", "AzureAD", "ExchangeOnlineManagement", "ORCA", "WhiteboardAdmin", "Microsoft.Graph*"
 )
 
 $O365ModuleInstalled = $true
